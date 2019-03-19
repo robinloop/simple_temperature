@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Demo</title>
+<!-- 引入echarts文件 -->
+<script src="js/echarts.min.js"></script>
+</head>
+<body
+	<div>
+		日期 : <input type="date" id = "date" placeholder="请输入日期"></input></br>
+		文字1: <input type="text" id = "name" placeholder="请输入温度计名称" value="上证指数"></input>
+		温度1: <input type="text" id = "temp" placeholder="请输入0~100的数值"></input></br>
+		文字2: <input type="text" id = "sd_name" placeholder="请输入湿度计名称" value="创业板指"></input>
+		温度2: <input type="text" id = "sd_temp" placeholder="请输入0~100的数值"></input></br>
+		文字3: <input type="text" id = "name3" placeholder="请输入温度计名称" value="沪深全A"></input>
+		温度3: <input type="text" id = "value3" placeholder="请输入0~100的数值"></input></br>
+		文字4: <input type="text" id = "name4" placeholder="请输入湿度计名称" value="上证50"></input>
+		温度4: <input type="text" id = "value4" placeholder="请输入0~100的数值"></input></br>
+		文字5: <input type="text" id = "name5" placeholder="请输入温度计名称" value="沪深300"></input>
+		温度5: <input type="text" id = "value5" placeholder="请输入0~100的数值"></input></br>
+		文字6: <input type="text" id = "name6" placeholder="请输入湿度计名称" value="中证500"></input>
+		温度6: <input type="text" id = "value6" placeholder="请输入0~100的数值"></input></br>
+		<button onClick="reset()">reset</button>
+	</div>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 900px; height: 600px;"></div>
+	
+    <script type="text/javascript">
+       // alert("1.准备初始化echarts实例");
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+		var init_temp = [50, 50, 50, 50, 50, 50];
+        // 指定图表的配置项和数据
+		var date = new Date();
+		;
+        var option = generateOption("温度", init_temp[0], "温度", init_temp[1], "温度", init_temp[2],
+			"温度", init_temp[3], "温度", init_temp[4], "温度", init_temp[5],
+			date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
+
+        //alert("2.准备指定配置项");
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);	
+		
+		function reset(){
+			var date = document.getElementById('date').value;
+			
+			var name1 = document.getElementById('name').value;
+			var value1 = document.getElementById('temp').value;
+			
+			var name2 = document.getElementById('sd_name').value;
+			var value2 = document.getElementById('sd_temp').value;
+			
+			var name3 = document.getElementById('name3').value;
+			var value3 = document.getElementById('value3').value;
+			
+			var name4 = document.getElementById('name4').value;
+			var value4 = document.getElementById('value4').value;
+			
+			var name5 = document.getElementById('name5').value;
+			var value5 = document.getElementById('value5').value;
+			
+			var name6 = document.getElementById('name6').value;
+			var value6 = document.getElementById('value6').value;
+			
+			
+			//if (assert_number(value1) || assert_number(value2) || assert_number(value3) ||
+			//	assert_number(value4) || assert_number(value5) || assert_number(value6)) {
+		　　//　　alert("请输入0~100之间的数字");
+		　　//　　return;
+			//}		
+			
+			option = generateOption(name1, value1, name2, value2, name3, value3, name4, value4,
+			name5, value5, name6, value6, date);
+
+			myChart.setOption(option);
+		} 
+		
+		function assert_number(value){
+			var re = /^[0-9]+.?[0-9]*$/; 
+			if (!re.test(value) || value <= 0 || value >= 100) {
+		　　　　alert("请输入0~100之间的数字");
+		　　　　return false;
+			}
+			return true;
+		}
+		function generateOption(name1, value1, name2, value2, name3, value3, name4, value4,
+			name5, value5, name6, value6, date){
+			
+			return {
+				title: {
+					text: date,
+					left: '39%',
+					top: '5%',
+				},
+				tooltip : {
+					formatter: "{b} : {c}°C"
+				},
+				toolbox: {
+					show: true,
+					feature: {
+						restore: {},
+						saveAsImage: {}
+					}
+				},
+				 graphic: [
+					{
+						type: 'image',
+						id: 'logo',
+						right: 675,
+						top: 20,
+						z: 10,
+						bounding: 'raw',
+						draggable: true,
+						origin: [75, 75],
+						style: {
+							image: 'image/logo.png',
+							width: 50,
+							height: 50,
+							opacity: 1
+						}
+					},
+					
+				],
+				series: [
+					{
+						name: '业务指标',
+						type: 'gauge',
+						center: ['20%', '30%'], 
+						radius: '35%',
+						title: {
+							fontSize: 20
+						},
+						axisLine: {            // 坐标轴线
+							lineStyle: {       // 属性lineStyle控制线条样式
+								width: 8
+							}
+						},
+						axisTick: {            // 坐标轴小标记
+							length:8,        // 属性length控制线长
+							lineStyle: {       // 属性lineStyle控制线条样式
+								color: 'auto'
+							}
+						},
+						splitLine: {           // 分隔线
+							length:15,         // 属性length控制线长
+							lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+								color: 'auto'
+							}
+						},
+						pointer: {
+							width:5
+						},
+						detail: {
+							fontSize: 20,
+							//formatter:'{value}°C',
+							formatter: function (value) {
+								value = (value + '').split('.');
+								value.length < 2 && (value.push('0'));
+								return value[0] + '.' + value[1] + '°C';
+							}
+						},
+						data: [{value: value1, name: name1}]
+					},
+					{
+						name: '业务指标',
+						type: 'gauge',
+						center: ['45%', '30%'], 
+						radius: '35%',
+						title: {
+							fontSize: 20
+						},
+						axisLine: {            // 坐标轴线
+							lineStyle: {       // 属性lineStyle控制线条样式
+								width: 8
+							}
+						},
+						axisTick: {            // 坐标轴小标记
+							length:8,        // 属性length控制线长
+							lineStyle: {       // 属性lineStyle控制线条样式
+								color: 'auto'
+							}
+						},
+						splitLine: {           // 分隔线
+							length:15,         // 属性length控制线长
+							lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+								color: 'auto'
+							}
+						},
+						pointer: {
+							width:5
+						},
+						detail: {
+							fontSize: 20,
+							//formatter:'{value}°C',
+							formatter: function (value) {
+								value = (value + '').split('.');
+								value.length < 2 && (value.push('0'));
+								return value[0] + '.' + value[1] + '°C';
+							}
+						},
+						data: [{value: value2, name: name2}]
+					},
+					{
+						name: '业务指标',
+						type: 'gauge',
+						center: ['70%', '30%'], 
+						radius: '35%',
+						title: {
+							fontSize: 20
+						},
+						axisLine: {            // 坐标轴线
+							lineStyle: {       // 属性lineStyle控制线条样式
+								width: 8
+							}
+						},
+						axisTick: {            // 坐标轴小标记
+							length:8,        // 属性length控制线长
+							lineStyle: {       // 属性lineStyle控制线条样式
+								color: 'auto'
+							}
+						},
+						splitLine: {           // 分隔线
+							length:15,         // 属性length控制线长
+							lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+								color: 'auto'
+							}
+						},
+						pointer: {
+							width:5
+						},
+						detail: {
+							fontSize: 20,
+							//formatter:'{value}°C',
+							formatter: function (value) {
+								value = (value + '').split('.');
+								value.length < 2 && (value.push('0'));
+								return value[0] + '.' + value[1] + '°C';
+							}
+						},
+						data: [{value: value3, name: name3}]
+					},
+					{
+						name: '业务指标',
+						type: 'gauge',
+						center: ['20%', '60%'], 
+						radius: '35%',
+						title: {
+							fontSize: 20
+						},
+						axisLine: {            // 坐标轴线
+							lineStyle: {       // 属性lineStyle控制线条样式
+								width: 8
+							}
+						},
+						axisTick: {            // 坐标轴小标记
+							length:8,        // 属性length控制线长
+							lineStyle: {       // 属性lineStyle控制线条样式
+								color: 'auto'
+							}
+						},
+						splitLine: {           // 分隔线
+							length:15,         // 属性length控制线长
+							lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+								color: 'auto'
+							}
+						},
+						pointer: {
+							width:5
+						},
+						detail: {
+							fontSize: 20,
+							//formatter:'{value}°C',
+							formatter: function (value) {
+								value = (value + '').split('.');
+								value.length < 2 && (value.push('0'));
+								return value[0] + '.' + value[1] + '°C';
+							}
+						},
+						data: [{value: value4, name: name4}]
+					},
+					{
+						name: '业务指标',
+						type: 'gauge',
+						center: ['45%', '60%'], 
+						radius: '35%',
+						title: {
+							fontSize: 20
+						},
+						axisLine: {            // 坐标轴线
+							lineStyle: {       // 属性lineStyle控制线条样式
+								width: 8
+							}
+						},
+						axisTick: {            // 坐标轴小标记
+							length:8,        // 属性length控制线长
+							lineStyle: {       // 属性lineStyle控制线条样式
+								color: 'auto'
+							}
+						},
+						splitLine: {           // 分隔线
+							length:15,         // 属性length控制线长
+							lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+								color: 'auto'
+							}
+						},
+						pointer: {
+							width:5
+						},
+						detail: {
+							fontSize: 20,
+							//formatter:'{value}°C',
+							formatter: function (value) {
+								value = (value + '').split('.');
+								value.length < 2 && (value.push('0'));
+								return value[0] + '.' + value[1] + '°C';
+							}
+						},
+						data: [{value: value5, name: name5}]
+					},
+					{
+						name: '业务指标',
+						type: 'gauge',
+						center: ['70%', '60%'], 
+						radius: '35%',
+						title: {
+							fontSize: 20
+						},
+						axisLine: {            // 坐标轴线
+							lineStyle: {       // 属性lineStyle控制线条样式
+								width: 8
+							}
+						},
+						axisTick: {            // 坐标轴小标记
+							length:8,        // 属性length控制线长
+							lineStyle: {       // 属性lineStyle控制线条样式
+								color: 'auto'
+							}
+						},
+						splitLine: {           // 分隔线
+							length:15,         // 属性length控制线长
+							lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+								color: 'auto'
+							}
+						},
+						pointer: {
+							width:5
+						},
+						detail: {
+							fontSize: 20,
+							//formatter:'{value}°C',
+							formatter: function (value) {
+								value = (value + '').split('.');
+								value.length < 2 && (value.push('0'));
+								return value[0] + '.' + value[1] + '°C';
+							}
+						},
+						data: [{value: value6, name: name6}]
+					},
+				]
+			};
+		}
+    </script>
+</body>
+</html>

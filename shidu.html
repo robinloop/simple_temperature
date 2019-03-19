@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Demo</title>
+<!-- 引入echarts文件 -->
+<script src="js/echarts.min.js"></script>
+</head>
+<body
+	<div>
+		文字: <input type="text" id = "name" placeholder="请输入温度计名称"></input></br>
+		温度: <input type="text" id = "temp" placeholder="请输入0~100的数值"></input></br>
+		文字: <input type="text" id = "sd_name" placeholder="请输入湿度计名称"></input></br>
+		湿度: <input type="text" id = "sd_temp" placeholder="请输入0~100的数值"></input></br>
+		<button onClick="reset()">reset</button>
+	</div>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 800px; height: 600px;"></div>
+	
+    <script type="text/javascript">
+       // alert("1.准备初始化echarts实例");
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+		var init_temp = 50;
+		var init_sd_temp = 50;
+        // 指定图表的配置项和数据
+        var option = generateOption("温度", init_temp, "湿度", init_sd_temp);
+
+        //alert("2.准备指定配置项");
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);	
+		
+		function reset(){
+
+			var name = document.getElementById('name').value;
+			var value = document.getElementById('temp').value;
+			
+			var sd_name = document.getElementById('sd_name').value;
+			var sd_value = document.getElementById('sd_temp').value;
+			
+			var re = /^[0-9]+.?[0-9]*$/; 
+			if (!re.test(value) || value <= 0 || value >= 100) {
+		　　　　alert("请输入0~100之间的数字");
+		　　　　return;
+			}
+			
+			if (!re.test(sd_value) || sd_value <= 0 || sd_value >= 100) {
+		　　　　alert("请输入0~100之间的数字");
+		　　　　return;
+			}
+			
+			
+			option = generateOption(name, value, sd_name, sd_value);
+
+			myChart.setOption(option);
+		} 
+		
+		function generateOption(name, value, sd_name, sd_value){
+			return {
+				tooltip : {
+					formatter: "{b} : {c}°C"
+				},
+				toolbox: {
+					show: true,
+					feature: {
+						restore: {},
+						saveAsImage: {}
+					}
+				},
+				 graphic: [
+					{
+						type: 'image',
+						id: 'logo',
+						right: 675,
+						top: 20,
+						z: 10,
+						bounding: 'raw',
+						draggable: true,
+						origin: [75, 75],
+						style: {
+							image: 'image/logo.png',
+							width: 50,
+							height: 50,
+							opacity: 1
+						}
+					},
+					
+				],
+				series: [
+					{
+						name: '业务指标',
+						type: 'gauge',
+						detail: {
+							//formatter:'{value}°C',
+							formatter: function (value) {
+								value = (value + '').split('.');
+								value.length < 2 && (value.push('0'));
+								return value[0] + '.' + value[1] + '°C';
+							}
+						},
+						data: [{value: value, name: name}]
+					},
+					{
+						name: '转速',
+						type: 'gauge',
+						center: ['50%', '85%'],    // 默认全局居中
+						radius: '35%',
+						//min:0,
+						//max:7,
+						//endAngle:45,
+						//splitNumber:7,
+						axisLine: {            // 坐标轴线
+							lineStyle: {       // 属性lineStyle控制线条样式
+								width: 8
+							}
+						},
+						axisTick: {            // 坐标轴小标记
+							length:8,        // 属性length控制线长
+							lineStyle: {       // 属性lineStyle控制线条样式
+								color: 'auto'
+							}
+						},
+						splitLine: {           // 分隔线
+							length:15,         // 属性length控制线长
+							lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+								color: 'auto'
+							}
+						},
+						pointer: {
+							width:5
+						},
+						title: {
+							offsetCenter: [0, '-30%'],       // x, y，单位px
+						},
+						detail: {
+							//formatter:'{value}%',
+							fontSize: 15,
+							formatter: function (value) {
+								value = (value + '').split('.');
+								value.length < 2 && (value.push('0'));
+								return value[0] + '.' + value[1] + '%';
+							}
+						},
+						data:[{value: sd_value, name: sd_name}]
+					},
+				]
+			};
+		}
+    </script>
+</body>
+</html>

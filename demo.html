@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Demo</title>
+<!-- 引入echarts文件 -->
+<script src="js/echarts.min.js"></script>
+</head>
+<body
+	<div>
+		文字: <input type="text" id = "name" placeholder="请输入名称"></input></br>
+		温度: <input type="text" id = "temp" placeholder="请输入0~100的数值"></input></br>
+		<button onClick="reset()">reset</button>
+	</div>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 800px; height: 600px;"></div>
+	
+    <script type="text/javascript">
+       // alert("1.准备初始化echarts实例");
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+		var init_temp = 50;
+        // 指定图表的配置项和数据
+        var option = generateOption("名称", init_temp);
+
+        //alert("2.准备指定配置项");
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);	
+		
+		function reset(){
+
+			var name = document.getElementById('name').value;
+			var value = document.getElementById('temp').value;
+			
+			var re = /^[0-9]+.?[0-9]*$/; 
+			if (!re.test(value) || value <= 0 || value >= 100) {
+		　　　　alert("请输入0~100之间的数字");
+		　　　　return;
+			}
+			
+			option = generateOption(name, value);
+
+			myChart.setOption(option);
+		} 
+		
+		function generateOption(name, value){
+			return {
+				tooltip : {
+					formatter: "{b} : {c}°C"
+				},
+				toolbox: {
+					show: true,
+					feature: {
+						restore: {},
+						saveAsImage: {}
+					}
+				},
+				 graphic: [
+					{
+						type: 'image',
+						id: 'logo',
+						right: 675,
+						top: 20,
+						z: 10,
+						bounding: 'raw',
+						draggable: true,
+						origin: [75, 75],
+						style: {
+							image: 'image/logo.png',
+							width: 50,
+							height: 50,
+							opacity: 1
+						}
+					},
+					
+				],
+				series: [
+					{
+						name: '业务指标',
+						type: 'gauge',
+						detail: {
+							//formatter:'{value}°C',
+							formatter: function (value) {
+								value = (value + '').split('.');
+								value.length < 2 && (value.push('0'));
+								return value[0] + '.' + value[1] + '°C';
+							}
+						},
+						data: [{value: value, name: name}]
+					}
+				]
+			};
+		}
+    </script>
+</body>
+</html>
